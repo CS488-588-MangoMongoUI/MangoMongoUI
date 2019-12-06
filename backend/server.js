@@ -2,6 +2,7 @@ const mongo = require('mongodb');
 const express = require('express');
 let {PythonShell} = require('python-shell');
 var cors = require('cors');
+const querystring = require('querystring')
 const API_PORT = 8081;
 const router = express.Router();
 const app = express();
@@ -53,20 +54,53 @@ router.get('/Query/:id', function(req,res){
 })
 
 router.get('/collections/', function(req,res){
-    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-        if (err) throw err;
-        const db = client.db("project")
-        db.listCollections().toArray(function(err, cols){
-            if(err) throw(err)
-            console.log(cols);
-            
-            client.close();
-            return res.json(cols);
-        })
-    });
+    if(req.query == null){
+        MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+            if (err) throw err;
+            const db = client.db("project")
+            db.listCollections().toArray(function(err, cols){
+                if(err) throw(err)
+                //console.log(cols);
+                client.close();
+                return res.json(cols);
+            })
+        });
+    }
+    else{
+        //query string stuff
+        var qy = req.query;
+        console.log(qy);
+        return res.json(qy);
+
+    }
 })
 
 
+
+/*
+router.get('/collections/:id', function(req,res){
+    var id = req.params.id;
+    console.log(id);
+    
+
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+        if (err) throw err;
+        const db = client.db("project")
+        const coll = db.collection(id);
+        
+        coll.find().toArray(function(err, cols){
+            if(err) throw(err)
+            console.log(cols);
+            client.close();
+            return res.json(cols);
+        })
+        
+      
+        
+    });
+})
+
+*/
 
 app.use('/api', router);
 
