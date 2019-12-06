@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import axios from 'axios'
 var q3png = require('./q3.png');
 const backendIP = 'http://34.83.87.49:8081';
+const reactStringReplace = require('react-string-replace');
 
 export default class queries extends Component{
 state = {
@@ -32,12 +33,17 @@ state = {
         </header>
         <body>
           
-          Q1: {this.state.data.Q1} <br /> <br/>
-          Q2: {this.state.data.Q2} <br /> <br/>
+          Q1: {reactStringReplace(this.state.data.Q1, "\n", (match,i) =>(
+          <br />))}<br /><br/> 
+          Q2: {reactStringReplace(this.state.data.Q2, "\n", (match,i) =>(
+          <br />))}<br /><br/>
           Q3: <img src ={q3png} style = {q3style} alt ="q3image"></img> <br /> <br/>
-          Q4: {this.state.data.Q4} <br /> <br/>
-          Q5: {this.state.data.Q5} <br /> <br/>
-          Q6: {this.state.data.Q6} <br /> <br/>
+          Q4: {reactStringReplace(this.state.data.Q4, "\n", (match,i) =>(
+              <br />))}<br /><br/>
+          Q5: {reactStringReplace(this.state.data.Q5, "\n", (match,i) =>(
+          <br />))}<br /><br/>
+          Q6: {reactStringReplace(this.state.data.Q6, "\n", (match,i) =>(
+              <br />))}<br /><br/>
           
 
         </body>

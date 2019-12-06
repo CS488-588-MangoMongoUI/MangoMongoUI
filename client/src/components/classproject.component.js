@@ -109,6 +109,8 @@ export default class classproject extends Component{
   //This is where we want to package up are query, then send the results to the results component
   onSubmit(e){
     e.preventDefault();
+    //sample
+    //http://localhost:8081/api/collections/?highway=205&queryType=speed&direction=NORTH&from=Sunnyside&to=Powell&startdate=09162011&enddate09172011
 
     const freeway ={
       highway: this.state.highwayname,
