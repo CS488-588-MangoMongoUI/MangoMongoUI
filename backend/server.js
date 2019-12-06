@@ -1,5 +1,6 @@
 const mongo = require('mongodb');
 const express = require('express');
+
 let {PythonShell} = require('python-shell');
 var cors = require('cors');
 const querystring = require('querystring')
@@ -67,10 +68,29 @@ router.get('/collections/', function(req,res){
         });
     }
     else{
+        var qs = req.query;
+        var qy = qs['queryType'];
+    
+        MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+            
+            if (err) throw err;
+            const db = client.db("project")
+            const collect = db.collection('uniondata')
+          
+            collect.find({ [qy] : {"$gt":100}}).toArray(function(err, cols){
+                if(err) throw(err)
+                //console.log(cols);
+                client.close();
+                return res.json(cols);
+            })
+        });
+
+        /*
         //query string stuff
         var qy = req.query;
         console.log(qy);
         return res.json(qy);
+        */
 
     }
 })
