@@ -9,6 +9,7 @@ state = {
     loaded: false
   }
 
+  //Button Click
   componentDidMount(){
     this.loaded = true;
     for(let i = 1 ; i <= 6; i ++){
