@@ -15,7 +15,7 @@ var result = "";
 console.log(__dirname);
 MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
     if (err) throw err;
-    const db = client.db("project").collection("detectors");
+    const db = client.db("project").collection("uniondata");
     db.findOne({}, function(err, res){
         console.log(res);
         result = res;
@@ -54,8 +54,8 @@ router.get('/Query/:id', function(req,res){
     })
 })
 
-router.get('/collections/', function(req,res){
-    if(req.query == null){
+router.get('/search/', function(req,res){
+    if(req.query == ""){
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
             if (err) throw err;
             const db = client.db("project")
@@ -69,15 +69,26 @@ router.get('/collections/', function(req,res){
     }
     else{
         var qs = req.query;
-        var qy = qs['queryType'];
-    
+        var queryType = qs['queryType'];
+        var direction = qs['direction'];
+        var from = qs['from'];
+        var to = qs['to'];
+        var startdate = qs['startdate'];
+        var enddate = qs['endate'];
+        var limit = parseInt(qs['limit']);
+        console.log(qs);
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
             
             if (err) throw err;
             const db = client.db("project")
             const collect = db.collection('uniondata')
           
-            collect.find({ [qy] : {"$gt":100}}).toArray(function(err, cols){
+            collect.aggregate([ 
+                {"$match" : {[queryType] : {"$gt": 0}}},
+                {"$match" : {"detectorInfor.direction" : direction}},
+                {"$match" : {"detectorInfor.locationtext" : from}},
+                {"$limit" : limit}
+            ]).toArray(function(err, cols){
                 if(err) throw(err)
                 //console.log(cols);
                 client.close();

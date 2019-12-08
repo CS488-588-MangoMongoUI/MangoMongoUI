@@ -28,7 +28,7 @@ state = {
     return (
       <div>
         <header>
-          Hello World
+      
           
         </header>
         <body>
