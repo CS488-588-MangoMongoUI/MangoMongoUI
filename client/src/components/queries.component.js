@@ -51,14 +51,15 @@ state = {
     );
   }
   
-  getProjectQuery(id){
+  async getProjectQuery(id){
 
-    fetch(`${backendIP}/api/query/${id}`)
+    await fetch(`${backendIP}/api/query/${id}`)
     .then((data) => data.json())
     .then((res) => {
       var result = this.state.data;
-      
+      if(res.data != null){
         result[`Q${id}`] = res.data.scriptPrints;
+      }
       this.setState({data: result})
       //console.log(JSON.stringify(this.state.data[`Q${id}`]))
       console.log(result);

@@ -56,8 +56,8 @@ export default class classproject extends Component{
       latlon: '',
       shortdirection: '',
       direction: 'NORTH',
-      date: new Date('2011/09/17 00:00:00'),
-      enddate: new Date('2011/09/18 00:00:00'),
+      date: new Date('2011/09/17'),
+      enddate: new Date('2011/09/18'),
       queryType: 'speed',
       collection: 'uniondata',
       xaxis: [],
@@ -91,14 +91,14 @@ export default class classproject extends Component{
       endLocation: selected.value
     })
   }
-  onChangeEndDate(enddate){
+  onChangeEndDate = selected =>{
     this.setState({
-      enddate: enddate
+      enddate: selected
     })
   }
-  onChangeDate(date){
+  onChangeDate = selected =>{
     this.setState({
-      date: date
+      date: selected
     })
   }
   onChangeDirection = selected =>{
@@ -129,18 +129,19 @@ export default class classproject extends Component{
     }
     //modified for backend
     */ 
+    console.log(this.state.date)
     const freeway ={
       //highway: this.state.highwayname,
       collection: this.state.collection,
       queryType: this.state.queryType,
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
-      startdate: new Date(this.state.date + ' GMT').toISOString(),
-      enddate: new Date(this.state.enddate + 'GMT').toISOString(),
+      startdate: new Date(this.state.date.toDateString() + ' GMT').toISOString(),
+      enddate: new Date(this.state.enddate.toDateString() + 'GMT').toISOString(),
       direction: this.state.direction,
       limit : 100
     }
-
+    
     var qs = '?' + querystring.stringify(freeway)
 
     console.log(qs)
