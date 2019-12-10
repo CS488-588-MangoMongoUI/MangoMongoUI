@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
+//import Results from './data.component.js'
 import DatePicker from 'react-datepicker' //https://api.jqueryui.com/datepicker/#method-setDate
 import "react-datepicker/dist/react-datepicker.css"
 import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/package/react-dropdown
 import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
-import Chart from 'react-apexcharts'
 
+const limitS = [{value: 1, label: 1},{value: 5, label: 5}, {value: 10, label: 10}, {value: 50, label: 50}, {value: 100, label: 100}, {value: 1000, label: 1000}, {value: 0, label: 'All'},]
+const defaultLimit = limitS[6]
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
 , { value: 'Foster NB', label: 'Foster'}, { value: 'Powell to I-205 NB', label: 'Powell'}, { value: 'Division NB', label: 'Division'}
@@ -16,12 +18,12 @@ const detectorSB = [{ value: 'Sunnyside SB', label: 'Sunnyside'}, { value: 'John
 , { value: 'Foster SB', label: 'Foster'}, { value: 'Powell Blvd SB', label: 'Powell'}, { value: 'Division SB', label: 'Division'}
 , { value: 'Stark/Washington SB', label: 'Stark/Washington'}, { value: 'I-205 SB at Glisan', label: 'Glisan'} ,
  { value: 'I-205 SB at Columbia', label: 'Columbia'}]
-const defaultTo = detectorSB[0]
+const defaultTo = detectorSB[1]
 const typeOfQuery = [{ value: 'speed', label: 'speed'}, { value: 'distance', label: 'distance'},
                       {value: 'Traveltime', label: 'Travel Time' }, {value: 'PeakTravel', label: 'Peak Travel Time'} ]
 const defaultOption = typeOfQuery[0]
 const defaultOptionA = a[0]
-const axios = require('axios')
+//const axios = require('axios')
 const backendIP = 'http://34.83.87.49:8081'
 
 export default class classproject extends Component{
@@ -36,109 +38,56 @@ export default class classproject extends Component{
     this.onChangeDirection = this.onChangeDirection.bind(this)
     this.onChangeEndLocation = this.onChangeEndLocation.bind(this)
     this.onChangeEndDate = this.onChangeEndDate.bind(this)
-
+    this.onChangeLimit = this.onChangeLimit.bind(this)
 
     this.state = {
       _id: '',
       highwayname: '205',
-      detectorid: 0,
-      milepost: 0,
-      stationid: 0,
-      detectorclass: 0,
-      lanenumber: 0,
-      upstream: 0,
-      downstream: 0,
-      stationclass: 0,
-      numberlanes: 0,
       length: 0,
       locationtext: 'Sunnyside NB', //Start
       endLocation: '', //End
       latlon: '',
       shortdirection: '',
       direction: 'NORTH',
-      date: new Date('2011/09/17 00:00:00'),
-      enddate: new Date('2011/09/18 00:00:00'),
+      date: new Date('2011/09/17 00:00:00 GMT'),
+      enddate: new Date('2011/09/18 00:00:00 GMT'),
       queryType: 'speed',
       collection: 'uniondata',
-      xaxis: [],
-      chartdata: []
+      limit: '0',
+      data: ['hi'],
     }
   }
 
+  //Not sure if this is needed
   componentDidMount(){
-    //This is the default values that I'm placing, need to connect to database
-    // this.setState({
-    //   _id: ['5db'],
-    //   highwayname: '205-North',
-    //   lanenumber: 1,
-    //   numberlanes: 3, 
-    //   length: .97,
-    //   locationtext: 'Sunnyside',
-    //   date: new Date()
-    //   //Keep adding more code for each of the fields
-    // })
-
   }
   
-  //Copy and paste this for all the things that we want to change wtih a text box
-  onChangeLocationText = selected =>{
-    this.setState({
-      locationtext: selected.value
-    })
-  }
-  onChangeEndLocation = selected =>{
-    this.setState({
-      endLocation: selected.value
-    })
-  }
-  onChangeEndDate(enddate){
-    this.setState({
-      enddate: enddate
-    })
-  }
-  onChangeDate(date){
-    this.setState({
-      date: date
-    })
-  }
-  onChangeDirection = selected =>{
-    this.setState({
-      direction: selected.value
-    })
-  }
-  onChangeQueryType = selected => {
-    this.setState({
-      queryType: selected.value //e.target.value
-    })
-  }
+  //Handling State changes with the text boxes and date changes.
+  onChangeLocationText = selected =>{this.setState({locationtext: selected.value})}
+  onChangeLimit = selected =>{this.setState({limit: selected.value})}
+  onChangeEndLocation = selected =>{this.setState({endLocation: selected.value})}
+  onChangeEndDate(date){this.setState({endDate: date})}
+  onChangeDate(date){this.setState({startdate: date})}
+  onChangeDirection = selected =>{this.setState({direction: selected.value})}
+  onChangeQueryType = selected => {this.setState({queryType: selected.value })}
 
   //This is where we want to package up are query, then send the results to the results component
   async onSubmit(e){
     e.preventDefault();
     //sample
     //http://localhost:8081/api/collections/?highway=205&queryType=speed&direction=NORTH&from=Sunnyside&to=Powell&startdate=09162011&enddate09172011
-    /*
-    const freeway ={
-      highway: this.state.highwayname,
-      locationtext: this.state.locationtext,
-      endLocation: this.state.endLocation,
-      date: this.state.date,
-      endDate: this.state.endDate,
-      queryType: this.state.queryType,
 
-    }
     //modified for backend
-    */ 
     const freeway ={
       //highway: this.state.highwayname,
       collection: this.state.collection,
       queryType: this.state.queryType,
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
-      startdate: new Date(this.state.date + ' GMT').toISOString(),
-      enddate: new Date(this.state.enddate + 'GMT').toISOString(),
+      startdate: this.state.date.toISOString(),
+      enddate: this.state.enddate.toISOString(),
       direction: this.state.direction,
-      limit : 100
+      limit: this.state.limit,
     }
 
     var qs = '?' + querystring.stringify(freeway)
@@ -163,24 +112,6 @@ export default class classproject extends Component{
         console.log(this.state.chartdata);
         this.forceUpdate();
     })  
-     
-  
-
-
-
-    // axios.get('http://localhost:5000',{ 
-    //   params: { 
-    //     speed: (2011, 9, 21, 0,0,0)
-    //   }
-    // })
-    //   .then(res => console.log(res.data))
-    //   .catch(error => console.log(error))
-
-//We grab all the data, then we need to send it to the results child.
-    console.log(freeway)
-    //window.location = '/results'
-  }
-
 
   render(){
     //
@@ -233,24 +164,20 @@ export default class classproject extends Component{
       //input
       <div>
       <h3>Create Query of Highway database</h3>      
-
       <p> We want to be able to build basic queries and get results here. </p>
-      
-      
       <form onSubmit={this.onSubmit}>
         <div className="d-block">
         <div className="form-group"> 
-          <label>Highway Name</label>
-          <input type="text"
-            required
-            className="form-control"
-            value={this.state.highwayname}
-            onChange={this.onChangeLocationText} /> {/*This is the wrong onChange method. Change later */}
+          <h4>Highway Name: I-205</h4>
         </div>
         </div>
         <div className="d-inline-block pr-5">  
           <label>Select Query Type </label>
           <Dropdown options={typeOfQuery} onChange={this.onChangeQueryType} value={defaultOption} placeholder="Select an option" />
+        </div>
+        <div className="d-inline-block pr-5">  
+          <label>Query Limit</label>
+          <Dropdown options={limitS} onChange={this.onChangeLimit} value={defaultLimit} placeholder="Select an option" />
         </div>
         <div className="d-inline-block pr-5">  
           <label>Select Direction</label>
@@ -269,8 +196,8 @@ export default class classproject extends Component{
           <DatePicker selected={this.state.date} onChange={this.onChangeDate} />
         </div>
         <div className="d-block"> 
-          <label className="pr-2">End Date(latest EOF 2015): </label>
-          <DatePicker selected={this.state.enddate} onChange={this.onChangeEndDate} />
+          <label className="pr-2">End Date(Latest 11/15/2011): </label>
+          <DatePicker selected={this.state.date} onChange={this.onChangeEndDate} />
         </div>
         <div className="form-group">
           <input type="submit" value="Get results" className="btn btn-primary" />
