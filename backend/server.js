@@ -75,6 +75,7 @@ router.get('/search/', function(req,res){
         var direction = qs['direction'];
         var from = qs['from'];
         var to = qs['to'];
+        var locationtext = qs['locationtext']
         var startdate = new Date(qs['startdate']) ;
         var enddate = new Date(qs['enddate']);
         var limit = parseInt(qs['limit']);
@@ -95,6 +96,7 @@ router.get('/search/', function(req,res){
             //console.log(matchdirection);
 
             var searchQuery = [
+            { $match : { "detectorInfor.locationtext" : `${locationtext}`}},
             { $match : { "detectorInfor.direction" : `${direction}`} },
             { $match : { starttime : {$gte : isodate(startdate)}}} ,
             { $match : { starttime : {$lt : isodate(enddate)}}},
