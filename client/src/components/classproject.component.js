@@ -130,6 +130,7 @@ export default class classproject extends Component{
     //modified for backend
     */ 
     console.log(this.state.date)
+    console.log(this.state.date.toDateString() + ' GMT')
     const freeway ={
       //highway: this.state.highwayname,
       collection: this.state.collection,
@@ -137,7 +138,7 @@ export default class classproject extends Component{
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
       startdate: new Date(this.state.date.toDateString() + ' GMT').toISOString(),
-      enddate: new Date(this.state.enddate.toDateString() + 'GMT').toISOString(),
+      enddate: new Date(this.state.enddate.toDateString() + ' GMT').toISOString(),
       direction: this.state.direction,
       limit : 100
     }
