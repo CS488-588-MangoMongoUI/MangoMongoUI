@@ -84,6 +84,7 @@ router.get('/search/', function(req,res){
 
         
         console.log(startdate);
+        console.log(req.query)
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
             
             if (err) return res.json(err);
@@ -98,8 +99,8 @@ router.get('/search/', function(req,res){
             var searchQuery = [
             { $match : { "detectorInfor.locationtext" : `${locationtext}`}},
             { $match : { "detectorInfor.direction" : `${direction}`} },
-            { $match : { starttime : {$gte : isodate(startdate)}}} ,
-            { $match : { starttime : {$lt : isodate(enddate)}}},
+            { $match : { starttime : {$gte : startdate}}} ,
+            { $match : { starttime : {$lt : enddate}}},
             { $limit : limit }
         
             ]

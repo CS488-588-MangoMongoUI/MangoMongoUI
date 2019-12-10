@@ -57,7 +57,8 @@ state = {
     .then((data) => data.json())
     .then((res) => {
       var result = this.state.data;
-      result[`Q${id}`] = res.data.scriptPrints;
+      
+        result[`Q${id}`] = res.data.scriptPrints;
       this.setState({data: result})
       //console.log(JSON.stringify(this.state.data[`Q${id}`]))
       console.log(result);

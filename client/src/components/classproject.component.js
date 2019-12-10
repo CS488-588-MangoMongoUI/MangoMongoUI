@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/package/react-dropdown
 import 'react-dropdown/style.css'
 //import axios from 'axios'
+import querystring from 'querystring'
 
 
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
@@ -21,6 +22,8 @@ const typeOfQuery = [{ value: 'speed', label: 'speed'}, { value: 'distance', lab
 const defaultOption = typeOfQuery[0]
 const defaultOptionA = a[0]
 const axios = require('axios')
+const backendIP = 'http://34.83.87.49:8081'
+
 export default class classproject extends Component{
   constructor(props) {
     super(props)
@@ -48,14 +51,15 @@ export default class classproject extends Component{
       stationclass: 0,
       numberlanes: 0,
       length: 0,
-      locationtext: '', //Start
+      locationtext: 'Sunnyside NB', //Start
       endLocation: '', //End
       latlon: '',
       shortdirection: '',
-      direction: '',
-      date: new Date(),
-      endDate: new Date(),
-      queryType: 'Speed',
+      direction: 'NORTH',
+      date: new Date('2011/09/17 00:00:00 GMT'),
+      enddate: new Date('2011/09/18 00:00:00 GMT'),
+      queryType: 'speed',
+      collection: 'uniondata'
     }
   }
 
@@ -92,12 +96,12 @@ export default class classproject extends Component{
   }
   onChangeDate(date){
     this.setState({
-      date: date
+      startdate: date
     })
   }
   onChangeDirection = selected =>{
     this.setState({
-      shortdirection: selected.value
+      direction: selected.value
     })
   }
   onChangeQueryType = selected => {
@@ -107,11 +111,11 @@ export default class classproject extends Component{
   }
 
   //This is where we want to package up are query, then send the results to the results component
-  onSubmit(e){
+  async onSubmit(e){
     e.preventDefault();
     //sample
     //http://localhost:8081/api/collections/?highway=205&queryType=speed&direction=NORTH&from=Sunnyside&to=Powell&startdate=09162011&enddate09172011
-
+    /*
     const freeway ={
       highway: this.state.highwayname,
       locationtext: this.state.locationtext,
@@ -121,6 +125,36 @@ export default class classproject extends Component{
       queryType: this.state.queryType,
 
     }
+    //modified for backend
+    */ 
+    const freeway ={
+      //highway: this.state.highwayname,
+      collection: this.state.collection,
+      queryType: this.state.queryType,
+      locationtext: this.state.locationtext,
+      //endLocation: this.state.endLocation,
+      startdate: this.state.date.toISOString(),
+      enddate: this.state.enddate.toISOString(),
+      direction: this.state.direction,
+      limit : 10
+    }
+
+    var qs = '?' + querystring.stringify(freeway)
+
+    console.log(qs)
+    window.open(backendIP + '/api/search/' + qs)
+    await fetch(`${backendIP}/api/search/${qs}`)
+      .then((data) => data.json())
+      .then((res) => {
+        //console.log(JSON.stringify(this.state.data[`Q${id}`]))
+        
+        console.log(res);
+    })  
+     
+  
+
+
+
     // axios.get('http://localhost:5000',{ 
     //   params: { 
     //     speed: (2011, 9, 21, 0,0,0)
