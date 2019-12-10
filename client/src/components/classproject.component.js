@@ -91,14 +91,14 @@ export default class classproject extends Component{
       endLocation: selected.value
     })
   }
-  onChangeEndDate(date){
+  onChangeEndDate(enddate){
     this.setState({
-      endDate: date
+      enddate: enddate
     })
   }
   onChangeDate(date){
     this.setState({
-      startdate: date
+      date: date
     })
   }
   onChangeDirection = selected =>{
@@ -149,6 +149,8 @@ export default class classproject extends Component{
       .then((data) => data.json())
       .then((res) => {
         //console.log(JSON.stringify(this.state.data[`Q${id}`]))
+        this.state.chartdata = [];
+        this.state.xaxis =[];
         var d;
         for(d of res){
           if(d.speed != null){
@@ -268,7 +270,7 @@ export default class classproject extends Component{
         </div>
         <div className="d-block"> 
           <label className="pr-2">End Date(latest EOF 2015): </label>
-          <DatePicker selected={this.state.date} onChange={this.onChangeEndDate} />
+          <DatePicker selected={this.state.enddate} onChange={this.onChangeEndDate} />
         </div>
         <div className="form-group">
           <input type="submit" value="Get results" className="btn btn-primary" />
