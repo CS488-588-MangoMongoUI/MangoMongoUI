@@ -5,7 +5,7 @@ import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/pac
 import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
-
+import Chart from 'react-apexcharts'
 
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
@@ -56,10 +56,12 @@ export default class classproject extends Component{
       latlon: '',
       shortdirection: '',
       direction: 'NORTH',
-      date: new Date('2011/09/17 00:00:00 GMT'),
-      enddate: new Date('2011/09/18 00:00:00 GMT'),
+      date: new Date('2011/09/17 00:00:00'),
+      enddate: new Date('2011/09/18 00:00:00'),
       queryType: 'speed',
-      collection: 'uniondata'
+      collection: 'uniondata',
+      xaxis: [],
+      chartdata: []
     }
   }
 
@@ -133,22 +135,31 @@ export default class classproject extends Component{
       queryType: this.state.queryType,
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
-      startdate: this.state.date.toISOString(),
-      enddate: this.state.enddate.toISOString(),
+      startdate: new Date(this.state.date + ' GMT').toISOString(),
+      enddate: new Date(this.state.enddate + 'GMT').toISOString(),
       direction: this.state.direction,
-      limit : 10
+      limit : 100
     }
 
     var qs = '?' + querystring.stringify(freeway)
 
     console.log(qs)
-    window.open(backendIP + '/api/search/' + qs)
+    //window.open(backendIP + '/api/search/' + qs)
     await fetch(`${backendIP}/api/search/${qs}`)
       .then((data) => data.json())
       .then((res) => {
         //console.log(JSON.stringify(this.state.data[`Q${id}`]))
-        
-        console.log(res);
+        var d;
+        for(d of res){
+          if(d.speed != null){
+            this.state.chartdata.push(d.speed)
+            this.state.xaxis.push(d.starttime)
+            console.log(d.starttime)
+          }
+        }
+
+        console.log(this.state.chartdata);
+        this.forceUpdate();
     })  
      
   
@@ -170,6 +181,51 @@ export default class classproject extends Component{
 
 
   render(){
+    //
+    this.state.options = {
+        chart: {
+              zoom: {
+                  enabled: false
+              }
+          },
+          dataLabels: {
+              enabled: false
+          },
+          stroke: {
+              curve: 'straight'
+          },
+          title: {
+              text: 'Speed Query',
+              align: 'left'
+          },
+          grid: {
+              row: {
+                  colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                  opacity: 0.5
+              },
+          },
+          xaxis: {
+              categories: this.state.xaxis,
+              labels: {
+                show : true,
+                trim: true,
+                hideOverlappingLabels:true,
+                
+              },
+              
+          }  
+    }
+    this.state.series = 
+      [{
+        name: "speed",
+        data: this.state.chartdata
+      }]
+  
+
+
+
+
+
     return(//The copy pasta is https://github.com/beaucarnes/mern-exercise-tracker-mongodb/blob/master/src/components/create-exercise.component.js
       //Create inputs for each value that is important to create a query. 
       //input
@@ -218,6 +274,9 @@ export default class classproject extends Component{
           <input type="submit" value="Get results" className="btn btn-primary" />
         </div>
       </form>
+      <div>
+        <Chart options={this.state.options} series={this.state.series} type="line" height="350" />
+      </div>
     </div>
     )
   }
