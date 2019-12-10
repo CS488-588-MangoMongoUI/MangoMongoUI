@@ -1,6 +1,6 @@
 const mongo = require('mongodb');
 const express = require('express');
-
+const isodate = require('isodate')
 let {PythonShell} = require('python-shell');
 var cors = require('cors');
 const querystring = require('querystring')
@@ -14,7 +14,7 @@ var q1 = "Loading";
 var result = "";
 console.log(__dirname);
 MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-    if (err) throw err;
+    if (err) return res.json(err);
     const db = client.db("project").collection("uniondata");
     db.findOne({}, function(err, res){
         console.log(res);
@@ -44,7 +44,7 @@ router.get('/Query/:id', function(req,res){
         answer += message + "\n"
     })
     pyshell.end(function(err){
-        if(err) throw (err)
+        if(err) return res.json(err)
         var jsdata =
         {
             scriptPrints: ""
@@ -57,10 +57,10 @@ router.get('/Query/:id', function(req,res){
 router.get('/search/', function(req,res){
     if(req.query == ""){
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
-            if (err) throw err;
+            if (err) return res.json(err);
             const db = client.db("project")
             db.listCollections().toArray(function(err, cols){
-                if(err) throw(err)
+                if(err) return res.json(err)
                 //console.log(cols);
                 client.close();
                 return res.json(cols);
@@ -69,29 +69,47 @@ router.get('/search/', function(req,res){
     }
     else{
         var qs = req.query;
+        
+        var collection = qs['collection'];
         var queryType = qs['queryType'];
         var direction = qs['direction'];
         var from = qs['from'];
         var to = qs['to'];
-        var startdate = qs['startdate'];
-        var enddate = qs['endate'];
+        var startdate = new Date(qs['startdate']) ;
+        var enddate = new Date(qs['enddate']);
         var limit = parseInt(qs['limit']);
-        console.log(qs);
+        
+        
+
+        
+        console.log(startdate);
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
             
-            if (err) throw err;
+            if (err) return res.json(err);
             const db = client.db("project")
-            const collect = db.collection('uniondata')
-          
-            collect.aggregate([ 
-                {"$match" : {[queryType] : {"$gt": 0}}},
-                {"$match" : {"detectorInfor.direction" : direction}},
-                {"$match" : {"detectorInfor.locationtext" : from}},
-                {"$limit" : limit}
-            ]).toArray(function(err, cols){
-                if(err) throw(err)
-                //console.log(cols);
+            const collect = db.collection(`${collection}`)
+
+            
+            //var matchdirection = (direction == null) ? null : {"$match" : {"detectorInfor.direction" : `${direction}`}};
+            //var matchfrom = (direction == null) ? null : {"$match" : {"detectorInfor.locationtext" : `${from}`}};
+            //console.log(matchdirection);
+
+            var searchQuery = [
+            { $match : { "detectorInfor.direction" : `${direction}`} },
+            { $match : { starttime : {$gte : isodate(startdate)}}} ,
+            { $match : { starttime : {$lt : isodate(enddate)}}},
+            { $limit : limit }
+        
+            ]
+        
+            console.log(searchQuery)
+            collect.aggregate(
+                searchQuery
+            ).toArray(function(err, cols){
                 client.close();
+                if(err) return res.json(err);
+                //console.log(cols);
+    
                 return res.json(cols);
             })
         });
