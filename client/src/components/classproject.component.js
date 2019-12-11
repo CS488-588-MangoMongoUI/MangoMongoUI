@@ -49,8 +49,8 @@ export default class classproject extends Component{
       latlon: '',
       shortdirection: '',
       direction: 'NORTH',
-      date: new Date('2011/09/17 00:00:00 GMT'),
-      enddate: new Date('2011/09/18 00:00:00 GMT'),
+      date: new Date('2011/09/17'),
+      enddate: new Date('2011/09/18'),
       queryType: 'speed',
       collection: 'uniondata',
       limit: '0',
@@ -62,6 +62,7 @@ export default class classproject extends Component{
   componentDidMount(){
   }
   
+
   //Handling State changes with the text boxes and date changes.
   onChangeLocationText = selected =>{this.setState({locationtext: selected.value})}
   onChangeLimit = selected =>{this.setState({limit: selected.value})}
@@ -71,6 +72,7 @@ export default class classproject extends Component{
   onChangeDirection = selected =>{this.setState({direction: selected.value})}
   onChangeQueryType = selected => {this.setState({queryType: selected.value })}
 
+
   //This is where we want to package up are query, then send the results to the results component
   async onSubmit(e){
     e.preventDefault();
@@ -78,18 +80,26 @@ export default class classproject extends Component{
     //http://localhost:8081/api/collections/?highway=205&queryType=speed&direction=NORTH&from=Sunnyside&to=Powell&startdate=09162011&enddate09172011
 
     //modified for backend
+
+
+ 
+    console.log(this.state.date)
+    console.log(this.state.date.toDateString() + ' GMT')
+
     const freeway ={
       //highway: this.state.highwayname,
       collection: this.state.collection,
       queryType: this.state.queryType,
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
-      startdate: this.state.date.toISOString(),
-      enddate: this.state.enddate.toISOString(),
+
+
+      startdate: new Date(this.state.date.toDateString() + ' GMT').toISOString(),
+      enddate: new Date(this.state.enddate.toDateString() + ' GMT').toISOString(),
       direction: this.state.direction,
       limit: this.state.limit,
     }
-
+    
     var qs = '?' + querystring.stringify(freeway)
 
     console.log(qs)
