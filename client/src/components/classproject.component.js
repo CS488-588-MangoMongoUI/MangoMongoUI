@@ -7,23 +7,19 @@ import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
 
-const limitS = [{value: 1, label: 1},{value: 5, label: 5}, {value: 10, label: 10}, {value: 50, label: 50}, {value: 100, label: 100}, {value: 1000, label: 1000}, {value: 0, label: 'All'},]
-const defaultLimit = limitS[6]
+const limitS = [{value: '1', label: 1},{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: '0', label: 'All'},]
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
 , { value: 'Foster NB', label: 'Foster'}, { value: 'Powell to I-205 NB', label: 'Powell'}, { value: 'Division NB', label: 'Division'}
 , { value: 'I-205 NB at Glisan', label: 'Glisan'}, { value: 'I-205 NB at Columbia', label: 'Columbia'} ]
-const defaultFrom = detectorNB[0]
 const detectorSB = [{ value: 'Sunnyside SB', label: 'Sunnyside'}, { value: 'Johnson Creek SB', label: 'Johnson Creek'}
 , { value: 'Foster SB', label: 'Foster'}, { value: 'Powell Blvd SB', label: 'Powell'}, { value: 'Division SB', label: 'Division'}
 , { value: 'Stark/Washington SB', label: 'Stark/Washington'}, { value: 'I-205 SB at Glisan', label: 'Glisan'} ,
  { value: 'I-205 SB at Columbia', label: 'Columbia'}]
-const defaultTo = detectorSB[1]
+
 const typeOfQuery = [{ value: 'speed', label: 'speed'}, { value: 'distance', label: 'distance'},
                       {value: 'Traveltime', label: 'Travel Time' }, {value: 'PeakTravel', label: 'Peak Travel Time'} ]
-const defaultOption = typeOfQuery[0]
-const defaultOptionA = a[0]
-//const axios = require('axios')
+
 const backendIP = 'http://34.83.87.49:8081'
 
 export default class classproject extends Component{
@@ -41,20 +37,21 @@ export default class classproject extends Component{
     this.onChangeLimit = this.onChangeLimit.bind(this)
 
     this.state = {
-      _id: '',
-      highwayname: '205',
-      length: 0,
-      locationtext: 'Sunnyside NB', //Start
-      endLocation: '', //End
-      latlon: '',
-      shortdirection: '',
-      direction: 'NORTH',
+      // _id: '',
+      // highwayname: '205',
+      // length: 0,
+      // locationtext: 'Sunnyside NB', //Start
+      // endLocation: '', //End
+      // latlon: '',
+      // shortdirection: '',
+      // direction: 'NORTH',
       date: new Date('2011/09/17'),
       enddate: new Date('2011/09/18'),
-      queryType: 'speed',
-      collection: 'uniondata',
+      // queryType: 'speed',
+      // collection: 'uniondata',
       limit: '0',
-      data: ['hi'],
+      // data: ['hi'],
+      
     }
   }
 
@@ -65,7 +62,7 @@ export default class classproject extends Component{
 
   //Handling State changes with the text boxes and date changes.
   onChangeLocationText = selected =>{this.setState({locationtext: selected.value})}
-  onChangeLimit = selected =>{this.setState({limit: selected.value})}
+  onChangeLimit = limit =>{this.setState({limit: limit.value })}
   onChangeEndLocation = selected =>{this.setState({endLocation: selected.value})}
   onChangeEndDate(date){this.setState({endDate: date})}
   onChangeDate(date){this.setState({startdate: date})}
@@ -80,20 +77,15 @@ export default class classproject extends Component{
     //http://localhost:8081/api/collections/?highway=205&queryType=speed&direction=NORTH&from=Sunnyside&to=Powell&startdate=09162011&enddate09172011
 
     //modified for backend
-
-
- 
     console.log(this.state.date)
     console.log(this.state.date.toDateString() + ' GMT')
 
-    const freeway ={
+    const freeway = {
       //highway: this.state.highwayname,
       collection: this.state.collection,
       queryType: this.state.queryType,
       locationtext: this.state.locationtext,
       //endLocation: this.state.endLocation,
-
-
       startdate: new Date(this.state.date.toDateString() + ' GMT').toISOString(),
       enddate: new Date(this.state.enddate.toDateString() + ' GMT').toISOString(),
       direction: this.state.direction,
@@ -119,9 +111,10 @@ export default class classproject extends Component{
           }
         }
 
-        console.log(this.state.chartdata);
-        this.forceUpdate();
+        console.log(this.state.chartdata)
+        this.forceUpdate()
     })  
+  }
 
   render(){
     //
@@ -164,14 +157,10 @@ export default class classproject extends Component{
         data: this.state.chartdata
       }]
   
-
-
-
-
-
     return(//The copy pasta is https://github.com/beaucarnes/mern-exercise-tracker-mongodb/blob/master/src/components/create-exercise.component.js
       //Create inputs for each value that is important to create a query. 
       //input
+      //
       <div>
       <h3>Create Query of Highway database</h3>      
       <p> We want to be able to build basic queries and get results here. </p>
@@ -183,23 +172,24 @@ export default class classproject extends Component{
         </div>
         <div className="d-inline-block pr-5">  
           <label>Select Query Type </label>
-          <Dropdown options={typeOfQuery} onChange={this.onChangeQueryType} value={defaultOption} placeholder="Select an option" />
+          <Dropdown options={typeOfQuery} onChange={this.onChangeQueryType} value={this.state.queryType} placeholder="Type" />
         </div>
         <div className="d-inline-block pr-5">  
           <label>Query Limit</label>
-          <Dropdown options={limitS} onChange={this.onChangeLimit} value={defaultLimit} placeholder="Select an option" />
+          <Dropdown options={limitS} onChange={this.onChangeLimit} value={this.state.limit} placeholder="How many results?" />
+          {console.log(this.state.limit)}
         </div>
         <div className="d-inline-block pr-5">  
           <label>Select Direction</label>
-          <Dropdown options={a} onChange={this.onChangeDirection} value={defaultOptionA} placeholder="Select an option" />
+          <Dropdown options={a} onChange={this.onChangeDirection} value={this.state.direction} placeholder="Which way?" />
         </div>
         <div className="d-inline-block pr-5">  
           <label>From </label>
-          <Dropdown options={detectorNB} onChange={this.onChangeLocationText} value={defaultFrom} placeholder="Select an option" />
+          <Dropdown options={detectorNB} onChange={this.onChangeLocationText} value={this.state.locationtext} placeholder="Starting Point" />
         </div>
         <div className="d-inline-block pr-5">  
           <label>To </label>
-          <Dropdown options={detectorSB} onChange={this.onChangeEndLocation} value={defaultTo} placeholder="Select an option" />
+          <Dropdown options={detectorSB} onChange={this.onChangeEndLocation} value={this.state.endLocation} placeholder="Ending Point" />
         </div>
         <div className="d-block"> 
           <label className="pr-1">Start Date(Earliest 9/15/2011): </label>
@@ -214,9 +204,22 @@ export default class classproject extends Component{
         </div>
       </form>
       <div>
-        <Chart options={this.state.options} series={this.state.series} type="line" height="350" />
+        {this.state.queryType === "speed" &&
+          <p>Speed Query Results.</p>
+        }
+        {this.state.queryType === "distance" &&
+          <p>Distance Query</p>
+        }
+        {this.state.queryType === "Traveltime" &&
+          <p>Travel Time Query</p>
+        }
+        {this.state.queryType === "PeakTravel" &&
+          <p>Peak Travel Time for {this.state.date}</p>
+        }
       </div>
     </div>
     )
   }
 }
+
+//<Chart options={this.state.options} series={this.state.series} type="line" height="350" />
