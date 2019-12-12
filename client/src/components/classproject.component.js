@@ -6,9 +6,10 @@ import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/pac
 import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
+import Chart from 'react-apexcharts'
 
 const limitS = [{value: 1, label: 1},{value: 5, label: 5}, {value: 10, label: 10}, {value: 50, label: 50}, {value: 100, label: 100}, {value: 1000, label: 1000}, {value: 0, label: 'All'},]
-const defaultLimit = limitS[6]
+const defaultLimit = limitS[4]
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
 , { value: 'Foster NB', label: 'Foster'}, { value: 'Powell to I-205 NB', label: 'Powell'}, { value: 'Division NB', label: 'Division'}
@@ -53,8 +54,9 @@ export default class classproject extends Component{
       enddate: new Date('2011/09/18'),
       queryType: 'speed',
       collection: 'uniondata',
-      limit: '0',
-      data: ['hi'],
+      limit: '100',
+      chartdata: [],
+      xaxis: []
     }
   }
 
@@ -67,10 +69,14 @@ export default class classproject extends Component{
   onChangeLocationText = selected =>{this.setState({locationtext: selected.value})}
   onChangeLimit = selected =>{this.setState({limit: selected.value})}
   onChangeEndLocation = selected =>{this.setState({endLocation: selected.value})}
-  onChangeEndDate(date){this.setState({endDate: date})}
-  onChangeDate(date){this.setState({startdate: date})}
+  onChangeEndDate(date){this.setState({enddate: date})}
+  onChangeDate(date){this.setState({date: date})}
   onChangeDirection = selected =>{this.setState({direction: selected.value})}
   onChangeQueryType = selected => {this.setState({queryType: selected.value })}
+
+
+
+
 
 
   //This is where we want to package up are query, then send the results to the results component
@@ -108,9 +114,14 @@ export default class classproject extends Component{
       .then((data) => data.json())
       .then((res) => {
         //console.log(JSON.stringify(this.state.data[`Q${id}`]))
+        console.log(res)
+          
         this.state.chartdata = [];
         this.state.xaxis =[];
+        console.log(res)
         var d;
+        if (res == null)
+          return
         for(d of res){
           if(d.speed != null){
             this.state.chartdata.push(d.speed)
@@ -122,6 +133,7 @@ export default class classproject extends Component{
         console.log(this.state.chartdata);
         this.forceUpdate();
     })  
+  }
 
   render(){
     //
@@ -207,7 +219,7 @@ export default class classproject extends Component{
         </div>
         <div className="d-block"> 
           <label className="pr-2">End Date(Latest 11/15/2011): </label>
-          <DatePicker selected={this.state.date} onChange={this.onChangeEndDate} />
+          <DatePicker selected={this.state.enddate} onChange={this.onChangeEndDate} />
         </div>
         <div className="form-group">
           <input type="submit" value="Get results" className="btn btn-primary" />
