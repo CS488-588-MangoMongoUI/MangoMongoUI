@@ -6,7 +6,7 @@ import classproject from './components/classproject.component';
 import about from './components/About.component';
 import Navbar from './components/Navbar.component';
 import queries from './components/queries.component';
-import results from './components/results.component';
+ 
 
 
 function App(){
@@ -17,7 +17,6 @@ function App(){
       <Route path="/" exact component={classproject} />
       <Route path="/about" component ={about} />
       <Route path="/ourqueries" component ={queries} />
-      <Route path="/results" component ={results} />
       </div>
     </Router>
   );
