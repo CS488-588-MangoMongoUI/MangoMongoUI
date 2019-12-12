@@ -9,7 +9,7 @@ import querystring from 'querystring'
 
 //import ReactTooltip from 'react-tooltip' //https://www.npmjs.com/package/react-tooltip
 import Chart from 'react-apexcharts'
-const limitS = [{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}]
+const limitS = [{value: '10', label: 10}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: '10000', label: 10000}, {value: '100000', label: 100000}]
 
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
