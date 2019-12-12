@@ -9,7 +9,7 @@ import querystring from 'querystring'
 
 //import ReactTooltip from 'react-tooltip' //https://www.npmjs.com/package/react-tooltip
 import Chart from 'react-apexcharts'
-const limitS = [{value: '1', label: 1},{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: 0, label: 'All'}]
+const limitS = [{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}]
 
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
@@ -178,7 +178,7 @@ export default class classproject extends Component{
           xaxis: {
               categories: this.state.xaxis,
               labels: {
-                show : true,
+                show : false,
                 trim: true,
                 hideOverlappingLabels:true,
                 
