@@ -7,11 +7,9 @@ import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
 
-import ReactTooltip from 'react-tooltip' //https://www.npmjs.com/package/react-tooltip
+//import ReactTooltip from 'react-tooltip' //https://www.npmjs.com/package/react-tooltip
 import Chart from 'react-apexcharts'
-const limitS = [{value: 1, label: 1},{value: 5, label: 5}, {value: 10, label: 10}, {value: 50, label: 50}, {value: 100, label: 100}, {value: 1000, label: 1000}, {value: 0, label: 'All'},]
-const defaultLimit = limitS[4]
-
+const limitS = [{value: '1', label: 1},{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: 0, label: 'All'}]
 
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
 const detectorNB = [{ value: 'Sunnyside NB', label: 'Sunnyside'}, { value: 'Johnson Cr NB', label: 'Johnson Creek'}
@@ -24,6 +22,7 @@ const detectorSB = [{ value: 'Sunnyside SB', label: 'Sunnyside'}, { value: 'John
 
 const typeOfQuery = [{ value: 'speed', label: 'speed'}, { value: 'distance', label: 'distance'},
                       {value: 'Traveltime', label: 'Travel Time' }, {value: 'PeakTravel', label: 'Peak Travel Time'} ]
+
 
 const backendIP = 'http://34.83.87.49:8081'
 
@@ -40,6 +39,7 @@ export default class classproject extends Component{
     this.onChangeEndLocation = this.onChangeEndLocation.bind(this)
     this.onChangeEndDate = this.onChangeEndDate.bind(this)
     this.onChangeLimit = this.onChangeLimit.bind(this)
+    this.onChangeQueryType = this.onChangeQueryType.bind(this)
 
     this.state = {
       // _id: '',
@@ -102,10 +102,11 @@ export default class classproject extends Component{
       direction: this.state.direction,
       limit: this.state.limit,
     }
-    const speed = { locationtext : this.state.locationtext, startdate: this.state.datetoDateString() + ' GMT', direction: this.state.direction, limit: this.state.limit}
+    const speed = { locationtext : this.state.locationtext, startdate: this.state.date.toDateString(), direction: this.state.direction, limit: this.state.limit}
     const distance = { locationtext : this.state.locationtext, endLocation: this.state.endLocation, direction: this.state.direction}
     const travelTime = { locationtext : this.state.locationtext, endLocation: this.state.endLocation}
     var qs = '?'
+    /*
     if(this.state.queryType === "speed"){
       qs.append(querystring.stringify(speed)) 
     }else if(this.state.queryType === "distance"){
@@ -113,7 +114,8 @@ export default class classproject extends Component{
     }else if(this.state.queryType === "TravelTime"){
       qs.append(querystring.stringify(travelTime)) 
     }
-    querystring.stringify(freeway) 
+    */
+    qs = qs + querystring.stringify(freeway) 
 
     console.log(qs)
     //window.open(backendIP + '/api/search/' + qs)
@@ -126,12 +128,19 @@ export default class classproject extends Component{
         this.state.chartdata = [];
         this.state.xaxis =[];
         console.log(res)
-        var d;
+        var d, type;
+        if(this.state.queryType === "speed"){
+          type = 'speed';
+        }else if(this.state.queryType === "distance"){
+          //type = 'distance'
+        }else if(this.state.queryType === "TravelTime"){
+          //
+        }
         if (res == null)
           return
         for(d of res){
-          if(d.speed != null){
-            this.state.chartdata.push(d.speed)
+          if(d[`${type}`] != null){
+            this.state.chartdata.push(d[`${type}`])
             this.state.xaxis.push(d.starttime)
             console.log(d.starttime)
           }
@@ -199,7 +208,7 @@ export default class classproject extends Component{
         </div>
         <div className="d-inline-block pr-5">  
           <a data-tip="Inputs you need for each query. <br/> Speed: Direction, Starting Point, Start Date <br/> Distance: Direction, Start Point, End Point <br/> Travel Time: Start Point, End Point ">Select Query Type</a>
-          <ReactTooltip place="top" type="info" effect="float" multiline="true"/>
+
           <Dropdown  data-tip="Hi" options={typeOfQuery} onChange={this.onChangeQueryType} value={this.state.queryType} placeholder="Type" />
         </div>
         <div className="d-inline-block pr-5">  
@@ -242,12 +251,12 @@ export default class classproject extends Component{
           <p>Travel Time Query</p>
         }
         {this.state.queryType === "PeakTravel" &&
-          <p>Peak Travel Time for {this.state.date}</p>
+          <p>Peak Travel Time</p>
         }
       </div>
+      <div><Chart options={this.state.options} series={this.state.series} type="line" height="350" /></div>
     </div>
     )
   }
 }
 
-//<Chart options={this.state.options} series={this.state.series} type="line" height="350" />
