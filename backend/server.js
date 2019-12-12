@@ -81,10 +81,10 @@ router.get('/search/', function(req,res){
         var limit = parseInt(qs['limit']);
         
         
-
-        
         console.log(startdate);
-        console.log(req.query)
+        console.log(req.query);
+
+
         MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
             
             if (err) return res.json(err);
