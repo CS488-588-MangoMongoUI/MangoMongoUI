@@ -6,7 +6,7 @@ import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/pac
 import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from 'react-tooltip' //https://www.npmjs.com/package/react-tooltip
 
 const limitS = [{value: '1', label: 1},{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: '0', label: 'All'},]
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
@@ -92,8 +92,18 @@ export default class classproject extends Component{
       direction: this.state.direction,
       limit: this.state.limit,
     }
-    
-    var qs = '?' + querystring.stringify(freeway)
+    const speed = { locationtext : this.state.locationtext, startdate: this.state.datetoDateString() + ' GMT', direction: this.state.direction, limit: this.state.limit}
+    const distance = { locationtext : this.state.locationtext, endLocation: this.state.endLocation, direction: this.state.direction}
+    const travelTime = { locationtext : this.state.locationtext, endLocation: this.state.endLocation}
+    var qs = '?'
+    if(this.state.queryType === "speed"){
+      qs.append(querystring.stringify(speed)) 
+    }else if(this.state.queryType === "distance"){
+      qs.append(querystring.stringify(distance)) 
+    }else if(this.state.queryType === "TravelTime"){
+      qs.append(querystring.stringify(travelTime)) 
+    }
+    querystring.stringify(freeway) 
 
     console.log(qs)
     //window.open(backendIP + '/api/search/' + qs)
