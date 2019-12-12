@@ -6,6 +6,7 @@ import Dropdown from 'react-dropdown'// Drop down from https://www.npmjs.com/pac
 import 'react-dropdown/style.css'
 //import axios from 'axios'
 import querystring from 'querystring'
+import ReactTooltip from 'react-tooltip'
 
 const limitS = [{value: '1', label: 1},{value: '5', label: 5}, {value: '10', label: 10}, {value: '50', label: 50}, {value: '100', label: 100}, {value: '1000', label: 1000}, {value: '0', label: 'All'},]
 const a = [{ value: 'NORTH', label: 'North'}, { value: 'SOUTH', label: 'South'} ]
@@ -164,6 +165,7 @@ export default class classproject extends Component{
       <div>
       <h3>Create Query of Highway database</h3>      
       <p> We want to be able to build basic queries and get results here. </p>
+
       <form onSubmit={this.onSubmit}>
         <div className="d-block">
         <div className="form-group"> 
@@ -171,8 +173,9 @@ export default class classproject extends Component{
         </div>
         </div>
         <div className="d-inline-block pr-5">  
-          <label>Select Query Type </label>
-          <Dropdown options={typeOfQuery} onChange={this.onChangeQueryType} value={this.state.queryType} placeholder="Type" />
+          <a data-tip="Inputs you need for each query. <br/> Speed: Direction, Starting Point, Start Date <br/> Distance: Direction, Start Point, End Point <br/> Travel Time: Start Point, End Point ">Select Query Type</a>
+          <ReactTooltip place="top" type="info" effect="float" multiline="true"/>
+          <Dropdown  data-tip="Hi" options={typeOfQuery} onChange={this.onChangeQueryType} value={this.state.queryType} placeholder="Type" />
         </div>
         <div className="d-inline-block pr-5">  
           <label>Query Limit</label>
